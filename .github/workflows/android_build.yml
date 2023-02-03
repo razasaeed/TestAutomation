@@ -1,0 +1,46 @@
+name: Build and distribute APK
+
+on:
+  push:
+    branches:
+      - develop
+
+#env:
+#  FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Android SDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '1.8'
+
+      - name: Install dependencies
+        run: ./gradlew build
+
+      - name: Build APK
+        run: ./gradlew assembleDebug
+
+      - name: Save build artifacts
+        run: |
+          git config --global user.email "razasaeed135@gmail.com"
+          git config --global user.name "Raza Saeed"
+          git add app/build/outputs/
+          git commit -m "Adding build artifacts"
+          git push origin HEAD
+
+      - name: Distribute APK to AppCenter
+        uses: wzieba/AppCenter-Github-Action@v1
+        with:
+          appName: ${{ secrets.APP_CENTER_APP_NAME }}
+          token: ${{ secrets.APP_CENTER_API_TOKEN }}
+          group: testers
+          file: app/build/outputs/app-debug.apk
+          notifyTesters: true
+          debug: true
