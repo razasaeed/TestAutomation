@@ -41,6 +41,6 @@ jobs:
           appName: ${{ secrets.APP_CENTER_APP_NAME }}
           token: ${{ secrets.APP_CENTER_API_TOKEN }}
           group: testers
-          file: app/build/outputs/app-debug.apk
+          file: app/build/outputs/apk/debug/app-debug.apk
           notifyTesters: true
           debug: true
